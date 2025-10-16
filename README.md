@@ -109,10 +109,10 @@ python -m tests.test_request
 ## Gif-uri/Demo
 În continuare sunt prezentate două demonstrații de rulare ale aplicației. Vă rog să aveți puțină răbdare deoarece se încarcă mai greu (poate dura 2-3 minute). 
 ### Demo 1:
-![Run Test 1](images/Gif1.gif)
+![Run Test 1](https://raw.githubusercontent.com/andrei-vasile-dev/ObjectCounterAI/main/images/Gif1.gif)
 
 ### Demo 2:
-![Run Test 2](images/Gif2.gif)
+![Run Test 2](https://raw.githubusercontent.com/andrei-vasile-dev/ObjectCounterAI/main/images/Gif2.gif)
 
 
 # Scurtă descriere
