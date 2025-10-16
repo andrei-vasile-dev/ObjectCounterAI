@@ -1,0 +1,11 @@
+
+{
+    "rabbitmq": {
+        "host": "localhost",
+        "port": "5672"
+    },
+    "endpoint": {
+        "outQueue": "task_queue",
+        "inQueue": "response_queue"
+    }
+}

@@ -1,0 +1,30 @@
+
+# Web framework
+flask==3.1.1
+
+# RabbitMQ client
+pika
+
+# Object detection
+ultralytics==8.3.170
+
+# Coqui TTS
+coqui-tts==0.27.0
+
+# Machine learning / deep learning backend
+torch==2.7.1
+torchvision==0.22.1
+
+# Utility packages
+numpy
+pillow
+requests==2.32.0
+
+# Audio Playback
+playsound==1.3.0
+
+# If you get an error due to packages that need to be installed in addition
+# to the above, they can be installed using one of the following comands:
+
+# pip install package_name
+# conda install package_name (Anaconda specific)
