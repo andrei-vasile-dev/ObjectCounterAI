@@ -1,137 +1,140 @@
 
+---
 
-# Ai Service cu Flask, YOLO și TTS
+# 🤖 AI Service with Flask, YOLO, and TTS
 
-Acest proiect si-a propus să implementeze un **serviciu AI modular** care primește o imagine și un text descriptiv, identifică obiectele din imagine folosind **YOLO (Ultralytics)** și generează un răspuns audio folosind **Coqui TTS**.
-Comunicarea dintre componente se realizează prin broker-ul de mesaje RabbitMQ, iar coordonarea este realizată de un endpoint **Flask**.
+> **A modular AI ecosystem** designed to process images and text, perform object detection via **YOLOv8**, and synthesize voice responses using **Coqui TTS**, all orchestrated through **RabbitMQ**.
 
+---
 
-# Arhitectura proiectului
+## 📝 Project Overview
+This project implements a distributed AI service. It receives an image and a descriptive prompt, identifies objects using **Ultralytics YOLO**, and generates a natural-sounding audio response. The architecture is built on a producer-consumer model to ensure scalability and decoupling.
 
-Structura generală:
+### 🚀 Key Features
+*   ✅ **Object Detection:** High-performance detection using YOLOv8.
+*   ✅ **Speech Synthesis:** Text-to-Audio conversion via Coqui TTS.
+*   ✅ **Asynchronous Messaging:** Robust communication between services using RabbitMQ.
+*   ✅ **REST API:** Centralized coordination through a Flask endpoint (`/countObjects`).
+*   ✅ **Automated Testing:** Integrated validation script for end-to-end testing.
+
+---
+
+## 🏗️ Project Architecture
+
+The system is organized into specialized modules for easy maintenance and scaling:
 
 ```markdown
 app/
-
-|-----app.py # Endpoint Flask principal
-
-|-----message_routing.py # Componentă auxiliară din Flask care se ocupă cu logica de rutare a mesajelor RabbitMQ
+ 📂 app.py                 # Main Flask REST API
+ 📂 message_routing.py     # RabbitMQ routing logic & thread management
 
 images/
-
-|-----Câteva imagini pe care poate fi testată aplicația + Gif-urile din secțiunea de mai jos 
+ 📂 sample_images          # Test dataset & documentation assets
 
 workers/
-
-|-----yolo_worker.py # Worker pentru detecție de obiecte (YOLO)
-
-|-----tts_worker.py # Worker pentru generarea audio (TTS)
-
+ 📂 yolo_worker.py         # Object Detection service (Inference)
+ 📂 tts_worker.py          # Text-to-Speech synthesis service
 
 tests/
+ 📂 test_request.py        # Automated endpoint testing script
 
-|----- test_request.py # Script de testare a endpoint-ului
-
-
-config.json # Configurația RabbitMQ
-
-requirements.txt # Dependențe
+📄 config.json             # RabbitMQ & Service credentials
+📄 requirements.txt        # Project dependencies
 ```
 
+### 🔄 System Workflow (End-to-End)
+The data flows through the system following this pipeline:
+`Client` → `Flask` → `task_queue` → `YOLO` → `tts_queue` → `TTS` → `response_queue` → `Flask` → `Client`
 
-### Funcționalități principale
-```markdown
-- Detectarea obiectelor din imagini folosind YOLOv8
-- Generarea unui răspuns audio bazat pe text (Coqui TTS)
-- Comunicare asincronă între componente prin RabbitMQ
-- Endpoint Flask ('/countObjects') care coordoneaza fluxul
-- Testare automată prin script-ul 'tests/test_request.py' 
-```
+---
 
+## 🛠️ Installation & Setup
 
-### Fluxul aplicației (end-to-end) este următorul:
-```
-Client → Flask → „task_queue” → YOLO → „tts_queue” → TTS → „response_queue” → Flask → Client.
-```
-
-## Instalare și rulare
-
-Clonează proiectul:
+### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/<numele-tau>/countObjects_AI.git
+git clone https://github.com/<your-name>/countObjects_AI.git
 cd countObjects_AI
 ```
 
-### Instalare RabbitMQ
-- **Pe Windows (recomandat pentru testarea locală):**
-1. Descarcă si instalează Erlang:
-👉 https://www.erlang.org/downloads
-2. Descarcă și instalează RabbitMQ:
-👉 https://www.rabbitmq.com/download.html
-3. După instalare, pornește serviciul RabbitMQ
+### 2️⃣ RabbitMQ Configuration
+The message broker is essential for inter-service communication.
+*   **Windows (Recommended):**
+    1.  Install **Erlang**: [erlang.org/downloads](https://www.erlang.org/downloads)
+    2.  Install **RabbitMQ**: [rabbitmq.com/download.html](https://www.rabbitmq.com/download.html)
+    3.  Start the RabbitMQ service.
+*   **Management UI:** Access [http://localhost:15672](http://localhost:15672) (Default: `guest/guest`).
 
-Portul 15672 este pentru interfața web de management:
-👉 http://localhost:15672, utilizator implicit: guest/guest
-
-
-## Configurare mediu Anaconda
-Proiectul a fost creat și testat într-un mediu Python izolat creat cu **Anaconda**.
-### Creare mediu
-Creează mediu nou (de exemplu 'countObjects_AI') cu Python 3.10:
+### 3️⃣ Environment Setup (Anaconda)
+We recommend using a dedicated environment to avoid dependency conflicts.
 ```bash
+# Create environment
 conda create -n countObjects_AI python=3.10
-```
 
-### Activează mediul creat:
-```bash
-conda create -n countObjects_AI python=3.10
-```
-## Instalare dependențe:
-```bash
+# Activate environment
+conda activate countObjects_AI
+
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Rulează serviciile (recomandat din folderul rădăcină a proiectului):
-### Se deschid 4 terminale, se activează mediul Anaconda în fiecare, iar apoi se rulează în fiecare terminal câte un serviciu.
+---
+
+## 🚀 Running the Services
+
+To run the full pipeline, open **4 separate terminals**, activate the environment in each, and execute the following commands in order:
+
 ```bash
-# Terminalul 1
+# Terminal 1: Core API
 python -m app.app
 
-# Terminalul 2
+# Terminal 2: Computer Vision Worker
 python -m workers.yolo_worker
 
-# Terminalul 3
+# Terminal 3: Speech Synthesis Worker
 python -m workers.tts_worker
 
-# Terminalul 4 (testare endpoint)
+# Terminal 4: Test Execution
 python -m tests.test_request
 ```
-## Gif-uri/Demo
-În continuare sunt prezentate două demonstrații de rulare ale aplicației. Vă rog să aveți puțină răbdare deoarece se încarcă mai greu (poate dura 2-3 minute). 
-### Demo 1:
+
+---
+
+## 📺 Demos & Visuals
+
+Behold the system in action. *(Please allow 2-3 minutes for the GIFs to fully load due to high resolution)*.
+
+### 🔹 Demo 1: Object Identification
 ![Run Test 1](https://raw.githubusercontent.com/andrei-vasile-dev/ObjectCounterAI/main/images/gif1.gif)
 
-### Demo 2:
+### 🔹 Demo 2: Complex Scenario
 ![Run Test 2](https://raw.githubusercontent.com/andrei-vasile-dev/ObjectCounterAI/main/images/gif2.gif)
 
+---
 
-# Scurtă descriere
- Aplicația este un sistem AI distribuit care procesează cereri sub formă de JSON:
- ```bash
-  {
-  "id": id_value,
-  "text": "How many cars are represented in the image?"
-  }
-  ```
-Pe disk vor exista o serie de n imagini la care se face referire în întrebarea din payload. După ce serverul Flask primește cererea, trimite mesajul într-o coadă RabbitMQ (task_queue) pentru a fi prelucrat de worker-ul YOLO. Acest worker utilizează modelul YOLOv8n (din pachetul Ultralytics) pentru a detecta obiectele din imagine și returnează rezultatul sub formă de text (ex. "There are 6 object(s) of type 'car' in the image.").
+## 🔍 Detailed Technical Description
 
- Rezultatul este apoi trimis mai departe, printr-o altă coadă (tts_queue) către worker-ul TTS (Text-to-Speech). Acesta utilizează biblioteca Coqui TTS pentru a genera un fișier audio (.wav) care redă verbal răspunsul. TTS trimite server-ului Flask un mesaj JSON de forma:
-  ```bash
+The application functions as a **distributed AI system** processing JSON payloads:
+
+**Input Request:**
+ ```json
   {
-  "mesaj": textul sintetizat,
-  "audio_base64": "<fisier_audio_codificat_base64>"
+    "id": "req_001",
+    "text": "How many cars are represented in the image?"
   }
   ```
 
- Mesajul va trimis către server prin coada response_queue.
- În final, Flask primește răspunsul (de fapt clasa MessageRouting, care este un worker intern al aplicației Flask ce rulează într-un thread separat și care face conexiunea cu RabbitMQ), iar acesta îl oferă prin HTTP către script-ul client (test_request.py).
+### **The Processing Chain:**
+1.  **Flask Entry Point:** Receives the request and pushes the metadata to the `task_queue`.
+2.  **YOLO Worker:** Pulls the task, performs inference using the `YOLOv8n` model, and generates a textual summary (e.g., *"There are 6 object(s) of type 'car' in the image."*).
+3.  **TTS Worker:** Receives the text via `tts_queue` and uses the **Coqui TTS** library to synthesize a `.wav` file.
+4.  **Data Encoding:** The audio is converted to `base64` and sent back via `response_queue`:
+    ```json
+    {
+      "mesaj": "There are 6 object(s) of type 'car' in the image.",
+      "audio_base64": "<base64_encoded_string>"
+    }
+    ```
+5.  **Response Delivery:** The `MessageRouting` component (running in a dedicated thread within Flask) matches the response to the initial HTTP request and delivers it to the client.
+
+---
+*Developed as a showcase of Distributed Systems and AI Integration.*
