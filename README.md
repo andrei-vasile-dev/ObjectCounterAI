@@ -137,4 +137,3 @@ The application functions as a **distributed AI system** processing JSON payload
 5.  **Response Delivery:** The `MessageRouting` component (running in a dedicated thread within Flask) matches the response to the initial HTTP request and delivers it to the client.
 
 ---
-*Developed as a showcase of Distributed Systems and AI Integration.*
